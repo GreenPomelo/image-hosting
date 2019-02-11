@@ -1,20 +1,19 @@
-import React from "react";
-import { Pagination } from "antd";
-import { List, Avatar, Button, Skeleton } from "antd";
-import reqwest from "reqwest";
-import "../style/list.css";
+import React from 'react';
+import { List, Avatar, Button, Skeleton, Pagination } from 'antd';
+import '../style/list.css';
+import { getHistoryUpList } from '../api/list';
+
 function itemRender(current, type, originalElement) {
-  if (type === "prev") {
+  if (type === 'prev') {
     return <a>Previous</a>;
   }
-  if (type === "next") {
+  if (type === 'next') {
     return <a>Next</a>;
   }
   return originalElement;
 }
 
 const count = 3;
-const fakeDataUrl = `https://randomuser.me/api/?results=${count}&inc=name,gender,email,nat&noinfo`;
 
 export default class QyList extends React.Component {
   state = {
@@ -25,47 +24,52 @@ export default class QyList extends React.Component {
   };
 
   componentDidMount() {
-    this.getData(res => {
-      this.setState({
-        initLoading: false,
-        data: res.results,
-        list: res.results
-      });
-    });
+    this.getHistoryList();
   }
 
-  getData = callback => {
-    reqwest({
-      url: fakeDataUrl,
-      type: "json",
-      method: "get",
-      contentType: "application/json",
-      success: res => {
-        callback(res);
+  getHistoryList = () => {
+    const ONE = 1;
+    const TWENTY = 20;
+
+    const TOKEN = localStorage.getItem(`token`);
+    console.log(TOKEN);
+    getHistoryUpList(ONE, TWENTY, TOKEN).then(
+      ({ data: { success, data, errMsg } }) => {
+        console.log(data);
+        console.log(success);
+        console.log(errMsg);
+        // if (errMsg === 'Unauthorized Request') {
+        // }
+        // this.setState({
+        //   initLoading: false,
+        //   data: res.results,
+        //   list: res.results
+        // });
       }
-    });
+    );
   };
 
   onLoadMore = () => {
+    const { data } = this.state;
     this.setState({
       loading: true,
-      list: this.state.data.concat(
+      list: data.concat(
         [...new Array(count)].map(() => ({ loading: true, name: {} }))
       )
     });
-    this.getData(res => {
-      const data = this.state.data.concat(res.results);
+    this.getHistoryList(res => {
+      const dataNew = data.concat(res.results);
       this.setState(
         {
-          data,
-          list: data,
+          data: dataNew,
+          list: dataNew,
           loading: false
         },
         () => {
           // Resetting window's offsetTop so as to display react-virtualized demo underfloor.
           // In real scene, you can using public method of react-virtualized:
           // https://stackoverflow.com/questions/46700726/how-to-use-public-method-updateposition-of-react-virtualized
-          window.dispatchEvent(new Event("resize"));
+          window.dispatchEvent(new Event('resize'));
         }
       );
     });
@@ -77,10 +81,10 @@ export default class QyList extends React.Component {
       !initLoading && !loading ? (
         <div
           style={{
-            textAlign: "center",
+            textAlign: 'center',
             marginTop: 12,
             height: 32,
-            lineHeight: "32px"
+            lineHeight: '32px'
           }}
         >
           <Button onClick={this.onLoadMore}>loading more</Button>
