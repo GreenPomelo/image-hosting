@@ -5,10 +5,10 @@ import { getHistoryUpList } from '../api/list';
 
 function itemRender(current, type, originalElement) {
   if (type === 'prev') {
-    return <a>Previous</a>;
+    return <div>Previous</div>;
   }
   if (type === 'next') {
-    return <a>Next</a>;
+    return <div>Next</div>;
   }
   return originalElement;
 }
@@ -100,7 +100,7 @@ export default class QyList extends React.Component {
           loadMore={loadMore}
           dataSource={list}
           renderItem={item => (
-            <List.Item actions={[<a>edit</a>, <a>more</a>]}>
+            <List.Item actions={[<div>edit</div>, <div>more</div>]}>
               <Skeleton avatar title={false} loading={item.loading} active>
                 <List.Item.Meta
                   avatar={
