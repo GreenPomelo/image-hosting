@@ -6,9 +6,6 @@ axios.create({
   // baseURL: 'https://qingyou.njupt.edu.cn/mini_program'
 });
 
-// export const userLogin = (username, password) =>
-//   axios.post(`/picbed/user/login?username=${username}&password=${password}`);
-
 export const userLogin = (username, password) =>
   axios.post(
     `/picbed/user/login?${qs.stringify({
@@ -18,8 +15,8 @@ export const userLogin = (username, password) =>
   );
 
 export const userLogout = token =>
-  axios.post(`/picbed/user/logout`, {
+  axios.post(`/picbed/user/logout`, null, {
     headers: {
-      Cookie: token
+      Cookie: `auth=${token}`
     }
   });

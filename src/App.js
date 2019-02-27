@@ -8,7 +8,7 @@ import UserComponent from './layouts/index';
 const router = () => (
   <HashRouter>
     <Switch>
-      <Route path="/user" component={UserComponent} />
+      <Route path="/" component={UserComponent} />
       {/* <Route path="/" component={BasicLayout} /> */}
     </Switch>
   </HashRouter>

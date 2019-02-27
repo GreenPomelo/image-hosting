@@ -2,6 +2,7 @@ import React from 'react';
 import { List, Avatar, Button, Skeleton, Pagination } from 'antd';
 import '../style/list.css';
 import { getHistoryUpList } from '../api/list';
+import QyAlert from '../components/alert';
 
 function itemRender(current, type, originalElement) {
   if (type === 'prev') {
@@ -33,8 +34,8 @@ export default class QyList extends React.Component {
 
     const TOKEN = localStorage.getItem(`token`);
     console.log(TOKEN);
-    getHistoryUpList(ONE, TWENTY, TOKEN).then(
-      ({ data: { success, data, errMsg } }) => {
+    getHistoryUpList(ONE, TWENTY, TOKEN)
+      .then(({ data: { success, data, errMsg } }) => {
         console.log(data);
         console.log(success);
         console.log(errMsg);
@@ -45,8 +46,10 @@ export default class QyList extends React.Component {
         //   data: res.results,
         //   list: res.results
         // });
-      }
-    );
+      })
+      .catch(error => {
+        console.log(error);
+      });
   };
 
   onLoadMore = () => {

@@ -1,6 +1,8 @@
 import { combineReducers } from 'redux';
 import { userReducer } from './user';
+import { historyReducer } from './list';
 
-export const GraphApp = combineReducers({
-  userReducer
+export default combineReducers({
+  userReducer,
+  historyReducer
 });

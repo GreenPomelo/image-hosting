@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import { Alert } from 'antd';
 
-const onClose = e => {
-  console.log(e, 'I was closed.');
-};
+const onClose = () => {};
 
 export default class QyAlert extends Component {
   static defaultProps = {

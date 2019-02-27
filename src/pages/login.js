@@ -1,8 +1,11 @@
 import React from 'react';
 import { Form, Icon, Input, Button } from 'antd';
+import { connect } from 'react-redux';
 import logo from '../assets/qingyoulogo.svg';
 import Alert from '../components/alert';
-import { userLogin, userLogout } from '../api/user';
+import { userLogout } from '../api/user';
+import { loginRequest } from '../actions/user';
+import loginSaga from '../saga/user';
 
 const FormItem = Form.Item;
 const styleComponent = {
@@ -51,16 +54,20 @@ class NormalLoginForm extends React.Component {
 
   handleSubmit = e => {
     const { username, password } = this.state;
-    userLogin(username, password)
-      .then(({ data: { success, data, errMsg } }) => {
-        if (success) {
-          localStorage.setItem('token', data);
-          this.setState({ isLogin: true });
-        } else {
-          this.setState({ passwordWrong: true, errMsg });
-        }
-      })
-      .catch(errMsg => this.setState({ errMsg }));
+    // userLogin(username, password)
+    //   .then(({ data: { success, data, errMsg } }) => {
+    //     if (success) {
+    //       localStorage.setItem('token', data);
+    //       this.setState({ isLogin: true });
+    //     } else {
+    //       this.setState({ passwordWrong: true, errMsg });
+    //     }
+    //   })
+    //   .catch(errMsg => this.setState({ errMsg }));
+    this.props.loginRequest(username, password);
+    // this.props.loginSaga(username, password);
+    // this.props.dispatch(loginRequest(username, password));
+
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
@@ -74,9 +81,8 @@ class NormalLoginForm extends React.Component {
    */
   logOutPress = () => {
     this.setState({ isLogin: false });
-    localStorage.clear();
-    userLogout(localStorage.getItem(`token`)).then(res => {
-      console.log(res);
+    userLogout(localStorage.getItem(`token`)).then(() => {
+      localStorage.clear();
     });
   };
 
@@ -145,5 +151,13 @@ class NormalLoginForm extends React.Component {
   }
 }
 
+const mapDispatchToProps = dispatch => ({
+  loginRequest: (...args) => dispatch(loginRequest(...args)),
+  loginSaga: (...args) => dispatch(loginSaga(...args))
+});
+
 const QyLogin = Form.create()(NormalLoginForm);
-export default QyLogin;
+export default connect(
+  null,
+  mapDispatchToProps
+)(QyLogin);

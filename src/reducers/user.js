@@ -1,18 +1,22 @@
-import { LOGIN } from '../actions/user';
+import { LOGIN, LOGIN_FAIL, LOGIN_SUCCEED } from '../actions/user';
 
 export const initialUser = {
   username: '',
-  password: '',
-  token: null
+  token: null,
+  isLogin: false
 };
 
 export const userReducer = (state = initialUser, action) => {
   switch (action.type) {
-    case LOGIN:
+    case LOGIN_SUCCEED:
       return {
         ...state,
-        token: action.token
+        token: action.token,
+        username: action.username,
+        isLogin: true
       };
+    case LOGIN:
+      return state;
     default:
       return state;
   }

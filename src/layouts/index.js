@@ -27,15 +27,13 @@ export default class UserComponent extends Component {
               defaultSelectedKeys={navBarKey}
               style={{ lineHeight: '64px' }}
             >
-              <Menu.Item key="1">
-                <Link to="/user/upload">上传</Link>
-              </Menu.Item>
-              <Menu.Item key="2">
-                <Link to="/user/list">上传列表</Link>
-              </Menu.Item>
-              <Menu.Item key="3">
-                <Link to="/user/login">登录</Link>
-              </Menu.Item>
+              {routerData.map((item, index) =>
+                item.component ? (
+                  <Menu.Item key={index}>
+                    <Link to={item.path}>{item.name}</Link>
+                  </Menu.Item>
+                ) : null
+              )}
             </Menu>
           </Header>
           <Switch>
@@ -49,7 +47,7 @@ export default class UserComponent extends Component {
                 />
               ) : null
             )}
-            <Redirect exact from="/user" to="/user/login" />
+            <Redirect exact to="/login" />
           </Switch>
           <Content />
           <Footer style={{ textAlign: 'center' }}>
