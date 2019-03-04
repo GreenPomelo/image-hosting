@@ -1,25 +1,17 @@
 import React, { Component } from 'react';
-import { Alert } from 'antd';
-
-const onClose = () => {};
+import { notification, Icon } from 'antd';
 
 export default class QyAlert extends Component {
-  static defaultProps = {
-    errMsg: '发生了某些错误'
-  };
-
   render() {
-    const { errMsg } = this.props;
-    return (
-      <div>
-        <Alert
-          message="错误信息"
-          description={errMsg}
-          type="error"
-          closable
-          onClose={onClose}
-        />
-      </div>
-    );
+    const { error } = this.props;
+    if (error) {
+      notification.open({
+        message: '通知消息🍋',
+        description: error,
+        duration: 6,
+        icon: <Icon type="smile" style={{ color: '#108ee9' }} />
+      });
+    }
+    return null;
   }
 }

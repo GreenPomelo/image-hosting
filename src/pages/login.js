@@ -2,7 +2,7 @@ import React from 'react';
 import { Form, Icon, Input, Button } from 'antd';
 import { connect } from 'react-redux';
 import logo from '../assets/qingyoulogo.svg';
-import Alert from '../components/alert';
+import QyAlert from '../components/alert';
 import { userLogout } from '../api/user';
 import { loginRequest } from '../actions/user';
 import loginSaga from '../saga/user';
@@ -32,16 +32,8 @@ class NormalLoginForm extends React.Component {
     super();
     this.state = {
       username: '',
-      password: '',
-      passwordWrong: false,
-      errMsg: '',
-      isLogin: false
+      password: ''
     };
-  }
-
-  componentDidMount() {
-    const TOKEN = localStorage.getItem('token');
-    this.setState({ isLogin: !!TOKEN });
   }
 
   handleUsername = ({ target: { value: username } }) => {
@@ -54,44 +46,26 @@ class NormalLoginForm extends React.Component {
 
   handleSubmit = e => {
     const { username, password } = this.state;
-    // userLogin(username, password)
-    //   .then(({ data: { success, data, errMsg } }) => {
-    //     if (success) {
-    //       localStorage.setItem('token', data);
-    //       this.setState({ isLogin: true });
-    //     } else {
-    //       this.setState({ passwordWrong: true, errMsg });
-    //     }
-    //   })
-    //   .catch(errMsg => this.setState({ errMsg }));
     this.props.loginRequest(username, password);
     // this.props.loginSaga(username, password);
-    // this.props.dispatch(loginRequest(username, password));
-
     e.preventDefault();
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        console.log('Received values of form: ', values);
-      }
-    });
   };
 
   /**
    * 退出登录
    */
   logOutPress = () => {
-    this.setState({ isLogin: false });
-    userLogout(localStorage.getItem(`token`)).then(() => {
+    userLogout().then(() => {
       localStorage.clear();
     });
   };
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { passwordWrong, errMsg, isLogin } = this.state;
+    const { isLogin, error } = this.props;
     return (
       <div style={styleComponent.LoginContainer}>
-        {passwordWrong ? <Alert errMsg={errMsg} /> : null}
+        <QyAlert error={error} />
         <div style={styleComponent.LogoContainer}>
           <img src={logo} alt="" />
         </div>
@@ -150,7 +124,7 @@ class NormalLoginForm extends React.Component {
     );
   }
 }
-
+const mapStateToProps = state => ({ ...state.userReducer });
 const mapDispatchToProps = dispatch => ({
   loginRequest: (...args) => dispatch(loginRequest(...args)),
   loginSaga: (...args) => dispatch(loginSaga(...args))
@@ -158,6 +132,6 @@ const mapDispatchToProps = dispatch => ({
 
 const QyLogin = Form.create()(NormalLoginForm);
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(QyLogin);

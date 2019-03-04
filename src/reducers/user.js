@@ -1,9 +1,10 @@
-import { LOGIN, LOGIN_FAIL, LOGIN_SUCCEED } from '../actions/user';
+import { LOGIN_SUCCEED, LOG_OUT, ERROR_MESSAGE } from '../actions/constant';
 
 export const initialUser = {
   username: '',
   token: null,
-  isLogin: false
+  isLogin: false,
+  error: ''
 };
 
 export const userReducer = (state = initialUser, action) => {
@@ -15,8 +16,12 @@ export const userReducer = (state = initialUser, action) => {
         username: action.username,
         isLogin: true
       };
-    case LOGIN:
-      return state;
+    case ERROR_MESSAGE:
+      return {
+        ...state,
+        error: action.error
+      };
+    case LOG_OUT:
     default:
       return state;
   }

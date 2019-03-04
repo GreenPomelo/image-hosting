@@ -15,7 +15,7 @@ const props = {
       file: { status }
     } = info;
     if (status !== 'uploading') {
-      console.log(info.file, info.fileList);
+      // console.log(info.file, info.fileList);
     }
     if (status === 'done') {
       message.success(`${info.file.name} file uploaded successfully.`);
@@ -33,12 +33,20 @@ export default class QyUpload extends React.Component {
     };
   }
 
+  handleUpload = () => {
+    // console.log(1);
+  };
+
   render() {
     const { step } = this.state;
     return (
       <div className="upload-container">
         {step === 1 ? (
-          <Dragger {...props}>
+          <Dragger
+            customRequest={this.handleUpload}
+            accept=".png, .jpg, .jpeg"
+            {...props}
+          >
             <p className="ant-upload-drag-icon">
               <Icon type="inbox" />
             </p>

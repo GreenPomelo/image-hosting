@@ -23,3 +23,4 @@ yarn-error.log*
 src/**/*.css
 src/**/*.css.map
 /.vscode
+.idea/

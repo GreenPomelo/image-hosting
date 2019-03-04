@@ -1,8 +1,9 @@
 import React from 'react';
 import { List, Avatar, Button, Skeleton, Pagination } from 'antd';
 import '../style/list.css';
-import { getHistoryUpList } from '../api/list';
+import { connect } from 'react-redux';
 import QyAlert from '../components/alert';
+import { listRequest } from '../actions/list';
 
 function itemRender(current, type, originalElement) {
   if (type === 'prev') {
@@ -16,7 +17,7 @@ function itemRender(current, type, originalElement) {
 
 const count = 3;
 
-export default class QyList extends React.Component {
+class QyList extends React.Component {
   state = {
     initLoading: true,
     loading: false,
@@ -31,25 +32,7 @@ export default class QyList extends React.Component {
   getHistoryList = () => {
     const ONE = 1;
     const TWENTY = 20;
-
-    const TOKEN = localStorage.getItem(`token`);
-    console.log(TOKEN);
-    getHistoryUpList(ONE, TWENTY, TOKEN)
-      .then(({ data: { success, data, errMsg } }) => {
-        console.log(data);
-        console.log(success);
-        console.log(errMsg);
-        // if (errMsg === 'Unauthorized Request') {
-        // }
-        // this.setState({
-        //   initLoading: false,
-        //   data: res.results,
-        //   list: res.results
-        // });
-      })
-      .catch(error => {
-        console.log(error);
-      });
+    this.props.listRequest(ONE, TWENTY);
   };
 
   onLoadMore = () => {
@@ -93,9 +76,10 @@ export default class QyList extends React.Component {
           <Button onClick={this.onLoadMore}>loading more</Button>
         </div>
       ) : null;
-
+    const { error } = this.props;
     return (
       <div className="list-container">
+        <QyAlert error={error} />
         <List
           className="demo-loadmore-list"
           loading={initLoading}
@@ -122,3 +106,12 @@ export default class QyList extends React.Component {
     );
   }
 }
+const mapStateToProps = state => ({ ...state.historyReducer });
+const mapDispatchToProps = dispatch => ({
+  listRequest: (...args) => dispatch(listRequest(...args))
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(QyList);

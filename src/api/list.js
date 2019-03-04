@@ -8,5 +8,5 @@ const instance = axios.create({
 const ONE = 1;
 const TWENTY = 20;
 
-export const getHistoryUpList = (pageNum = ONE, pageSize = TWENTY, token) =>
+export const getHistoryUpList = (pageNum = ONE, pageSize = TWENTY) =>
   instance.post(`/picbed/user/history`, qs.stringify({ pageNum, pageSize }));

@@ -5,11 +5,6 @@ import QyUserList from './pages/userList';
 
 const routerConfig = [
   {
-    path: '/login',
-    component: QyLogin,
-    name: '登录'
-  },
-  {
     path: '/upload',
     component: QyUpload,
     name: '上传'
@@ -23,6 +18,11 @@ const routerConfig = [
     path: '/user-list',
     component: QyUserList,
     name: '用户列表'
+  },
+  {
+    path: '/login',
+    component: QyLogin,
+    name: '登录'
   }
 ];
 
