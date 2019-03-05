@@ -26,7 +26,14 @@ export const NEED_LOGIN = `NEED_LOGIN`;
 /**
  * 上传的操作
  */
-
+export const UPLOAD = `UPLOAD`;
+export const UPLOAD_DIRECT = `UPLOAD_DIRECT`;
+export const UPLOAD_INDIRECT = `UPLOAD_INDIRECT`;
+export const CHANGE_STEP = `CHANGE_STEP`;
+export const COMPRESS_OPEN = `COMPRESS_OPEN`;
+export const SCALE_OPEN = `SCALE_OPEN`;
+export const COMPRESS_IMAGE = `COMPRESS_IMAGE`;
+export const SCALE_IMAGE = `SCALE_IMAGE`;
 /**
  * 错误处理
  */

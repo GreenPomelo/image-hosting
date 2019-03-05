@@ -93,7 +93,7 @@ class QyUserList extends React.Component {
             </List.Item>
           )}
         />
-        <Button type="primary" onClick={this.showModal}>
+        <Button type="primary" icon="team" onClick={this.showModal}>
           添加用户
         </Button>
         <PopForm

@@ -1,6 +1,6 @@
 import React from 'react';
 import { List, Avatar, Button, Skeleton, Pagination } from 'antd';
-import '../style/list.css';
+import '../style/list.sass';
 import { connect } from 'react-redux';
 import QyAlert from '../components/alert';
 import { listRequest } from '../actions/list';

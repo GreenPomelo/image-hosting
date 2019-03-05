@@ -2,7 +2,7 @@ import React from 'react';
 import { Switch, Route, Redirect, Link, withRouter } from 'react-router-dom';
 import { Layout, Menu } from 'antd';
 import routerData from '../router-config';
-import '../style/navigate.css';
+import '../style/navigate.sass';
 import 'antd/dist/antd.css';
 
 const { Header, Content, Footer } = Layout;
