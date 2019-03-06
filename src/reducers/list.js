@@ -1,13 +1,9 @@
-import {
-  HISTORY_LIST,
-  HISTORY_PROGRESS,
-  ERROR_MESSAGE
-} from '../actions/constant';
+import { HISTORY_LIST, HISTORY_LIST_ERROR } from '../actions/constant';
 
 export const initialState = {
   historyList: [],
   progressStatus: true,
-  error: ''
+  historyError: ''
 };
 
 export const historyReducer = (state = initialState, action) => {
@@ -16,14 +12,14 @@ export const historyReducer = (state = initialState, action) => {
       return {
         ...state,
         historyList: action.historyList,
-        progressStatus: false
+        progressStatus: false,
+        historyError: ''
       };
-    case ERROR_MESSAGE:
+    case HISTORY_LIST_ERROR:
       return {
         ...state,
-        error: action.error
+        historyError: action.error
       };
-    case HISTORY_PROGRESS:
     default:
       return state;
   }

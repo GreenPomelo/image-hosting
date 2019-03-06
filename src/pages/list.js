@@ -1,30 +1,11 @@
 import React from 'react';
-import { List, Avatar, Button, Skeleton, Pagination } from 'antd';
+import { List, Avatar } from 'antd';
 import '../style/list.sass';
 import { connect } from 'react-redux';
 import QyAlert from '../components/alert';
 import { listRequest } from '../actions/list';
 
-function itemRender(current, type, originalElement) {
-  if (type === 'prev') {
-    return <div>Previous</div>;
-  }
-  if (type === 'next') {
-    return <div>Next</div>;
-  }
-  return originalElement;
-}
-
-const count = 3;
-
 class QyList extends React.Component {
-  state = {
-    initLoading: true,
-    loading: false,
-    data: [],
-    list: []
-  };
-
   componentDidMount() {
     this.getHistoryList();
   }
@@ -35,73 +16,41 @@ class QyList extends React.Component {
     this.props.listRequest(ONE, TWENTY);
   };
 
-  onLoadMore = () => {
-    const { data } = this.state;
-    this.setState({
-      loading: true,
-      list: data.concat(
-        [...new Array(count)].map(() => ({ loading: true, name: {} }))
-      )
-    });
-    this.getHistoryList(res => {
-      const dataNew = data.concat(res.results);
-      this.setState(
-        {
-          data: dataNew,
-          list: dataNew,
-          loading: false
-        },
-        () => {
-          // Resetting window's offsetTop so as to display react-virtualized demo underfloor.
-          // In real scene, you can using public method of react-virtualized:
-          // https://stackoverflow.com/questions/46700726/how-to-use-public-method-updateposition-of-react-virtualized
-          window.dispatchEvent(new Event('resize'));
-        }
-      );
-    });
-  };
-
   render() {
-    const { initLoading, loading, list } = this.state;
-    const loadMore =
-      !initLoading && !loading ? (
-        <div
-          style={{
-            textAlign: 'center',
-            marginTop: 12,
-            height: 32,
-            lineHeight: '32px'
-          }}
-        >
-          <Button onClick={this.onLoadMore}>loading more</Button>
-        </div>
-      ) : null;
-    const { error } = this.props;
+    const { historyError, historyList } = this.props;
     return (
       <div className="list-container">
-        <QyAlert error={error} />
+        <QyAlert error={historyError} />
         <List
-          className="demo-loadmore-list"
-          loading={initLoading}
-          itemLayout="horizontal"
-          loadMore={loadMore}
-          dataSource={list}
+          itemLayout="vertical"
+          size="large"
+          pagination={{
+            onChange: page => {
+              console.log(page);
+            },
+            pageSize: 3
+          }}
+          dataSource={historyList.content}
           renderItem={item => (
-            <List.Item actions={[<div>edit</div>, <div>more</div>]}>
-              <Skeleton avatar title={false} loading={item.loading} active>
-                <List.Item.Meta
-                  avatar={
-                    <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
-                  }
-                  title={item.name.last}
-                  description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+            <List.Item
+              key={item.title}
+              extra={
+                <img
+                  width={272}
+                  alt="logo"
+                  src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
                 />
-                <div>content</div>
-              </Skeleton>
+              }
+            >
+              <List.Item.Meta
+                avatar={<Avatar src={item.avatar} />}
+                title={<a href={item.href}>{item.title}</a>}
+                description={item.description}
+              />
+              {item.content}
             </List.Item>
           )}
         />
-        <Pagination total={50} itemRender={itemRender} />
       </div>
     );
   }

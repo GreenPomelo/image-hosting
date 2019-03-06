@@ -10,7 +10,8 @@ const CollectionCreateForm = Form.create({ name: 'form_in_modal' })(
         <Modal
           visible={visible}
           title="添加用户"
-          okText="Create"
+          okText="添加"
+          cancelText="取消"
           onCancel={onCancel}
           onOk={onCreate}
         >

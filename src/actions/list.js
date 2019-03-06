@@ -1,6 +1,5 @@
 import { getHistoryUpList } from '../api/list';
-import { errMessage } from './alert';
-import { HISTORY_LIST } from './constant';
+import { HISTORY_LIST, HISTORY_LIST_ERROR } from './constant';
 
 export const updateList = historyList => ({
   type: HISTORY_LIST,
@@ -8,6 +7,7 @@ export const updateList = historyList => ({
 });
 
 export const changePageNum = () => ({ type: `CHANGE_PAGE_NUM` });
+export const listError = error => ({ type: HISTORY_LIST_ERROR, error });
 
 export const listRequest = (pageNum, pageSize) => dispatch => {
   getHistoryUpList(pageNum, pageSize).then(
@@ -15,7 +15,7 @@ export const listRequest = (pageNum, pageSize) => dispatch => {
       if (success) {
         dispatch(updateList(data));
       } else {
-        dispatch(errMessage(errMsg));
+        dispatch(listError(errMsg));
       }
     }
   );

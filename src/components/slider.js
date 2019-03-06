@@ -1,7 +1,9 @@
 import React from 'react';
 import { Slider, InputNumber, Row, Col } from 'antd';
+import { connect } from 'react-redux';
+import { scaleSlider, compressSlider } from '../actions/upload';
 
-export default class DecimalStep extends React.Component {
+class DecimalStep extends React.Component {
   state = {
     inputValue: 0
   };
@@ -9,6 +11,12 @@ export default class DecimalStep extends React.Component {
   onChange = value => {
     if (Number.isNaN(value)) {
       return;
+    }
+    const { silderType } = this.props;
+    if (silderType === 'compress') {
+      this.props.compressSlider(value);
+    } else {
+      this.props.scaleSlider(value);
     }
     this.setState({
       inputValue: value
@@ -42,3 +50,14 @@ export default class DecimalStep extends React.Component {
     );
   }
 }
+
+const mapStateToProps = state => ({ ...state.uploadReducer });
+
+const mapDispatchToProps = dispatch => ({
+  scaleSlider: (...args) => dispatch(scaleSlider(...args)),
+  compressSlider: (...args) => dispatch(compressSlider(...args))
+});
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(DecimalStep);

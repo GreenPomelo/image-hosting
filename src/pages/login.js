@@ -3,8 +3,13 @@ import { Form, Icon, Input, Button } from 'antd';
 import { connect } from 'react-redux';
 import logo from '../assets/qingyoulogo.svg';
 import QyAlert from '../components/alert';
-import { userLogout } from '../api/user';
-import { loginRequest } from '../actions/user';
+import {
+  loginRequest,
+  logOutRequest,
+  checkLogin,
+  userNameInput,
+  passWordInput
+} from '../actions/user';
 import loginSaga from '../saga/user';
 
 const FormItem = Form.Item;
@@ -28,24 +33,21 @@ const styleComponent = {
   }
 };
 class NormalLoginForm extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      username: '',
-      password: ''
-    };
+  componentDidMount() {
+    const loginStatus = !!localStorage.getItem('cookie');
+    this.props.checkLogin(loginStatus);
   }
 
   handleUsername = ({ target: { value: username } }) => {
-    this.setState({ username });
+    this.props.userNameInput(username);
   };
 
   handlePassword = ({ target: { value: password } }) => {
-    this.setState({ password });
+    this.props.passWordInput(password);
   };
 
   handleSubmit = e => {
-    const { username, password } = this.state;
+    const { username, password } = this.props;
     this.props.loginRequest(username, password);
     // this.props.loginSaga(username, password);
     e.preventDefault();
@@ -55,17 +57,15 @@ class NormalLoginForm extends React.Component {
    * 退出登录
    */
   logOutPress = () => {
-    userLogout().then(() => {
-      localStorage.clear();
-    });
+    this.props.logOutRequest();
   };
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { isLogin, error } = this.props;
+    const { isLogin, loginError } = this.props;
     return (
       <div style={styleComponent.LoginContainer}>
-        <QyAlert error={error} />
+        <QyAlert error={loginError} />
         <div style={styleComponent.LogoContainer}>
           <img src={logo} alt="" />
         </div>
@@ -88,7 +88,7 @@ class NormalLoginForm extends React.Component {
                     <Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />
                   }
                   onChange={this.handleUsername}
-                  placeholder="Username"
+                  placeholder="用户名"
                 />
               )}
             </FormItem>
@@ -105,7 +105,7 @@ class NormalLoginForm extends React.Component {
                   }
                   onChange={this.handlePassword}
                   type="password"
-                  placeholder="Password"
+                  placeholder="密码"
                 />
               )}
             </FormItem>
@@ -115,7 +115,7 @@ class NormalLoginForm extends React.Component {
                 htmlType="submit"
                 style={styleComponent.LoginFormButton}
               >
-                Log in
+                登录
               </Button>
             </FormItem>
           </Form>
@@ -126,8 +126,12 @@ class NormalLoginForm extends React.Component {
 }
 const mapStateToProps = state => ({ ...state.userReducer });
 const mapDispatchToProps = dispatch => ({
+  userNameInput: (...args) => dispatch(userNameInput(...args)),
+  passWordInput: (...args) => dispatch(passWordInput(...args)),
   loginRequest: (...args) => dispatch(loginRequest(...args)),
-  loginSaga: (...args) => dispatch(loginSaga(...args))
+  loginSaga: (...args) => dispatch(loginSaga(...args)),
+  logOutRequest: (...args) => dispatch(logOutRequest(...args)),
+  checkLogin: (...args) => dispatch(checkLogin(...args))
 });
 
 const QyLogin = Form.create()(NormalLoginForm);

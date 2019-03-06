@@ -3,6 +3,7 @@ import { Upload, Icon, message, Input, Switch, Modal, Button } from 'antd';
 import '../style/upload.sass';
 import { connect } from 'react-redux';
 import Slider from '../components/slider';
+import QyAlert from '../components/alert';
 import {
   upload,
   changeStep,
@@ -11,7 +12,8 @@ import {
   compressRequest,
   scaleRequest,
   uploadDirectlyRequest,
-  uploadIndirectRequest
+  uploadIndirectRequest,
+  prefixInput
 } from '../actions/upload';
 
 const { Dragger } = Upload;
@@ -19,6 +21,9 @@ const uploadProps = {
   name: 'file',
   multiple: false,
   action: '//jsonplaceholder.typicode.com/posts/',
+  headers: {
+    authorization: 'authorization-text'
+  },
   // Requset Url
   onChange(info) {
     const {
@@ -43,35 +48,66 @@ class QyUpload extends React.Component {
   handleUpload = ev => {
     this.props.upload(ev.file);
     const { file } = this.props;
-    console.log(file);
     if (file) {
       this.props.changeStep(1);
     }
   };
 
+  handleCompress = () => {
+    const { file, imageQuality } = this.props;
+    this.props.compressRequest(file, imageQuality);
+  };
+
+  handleScale = () => {
+    const { file, scaleRatio } = this.props;
+    this.props.scaleRequest(file, scaleRatio);
+  };
+
+  handlePrefix = ({ target: { value } }) => {
+    this.props.prefixInput(value);
+  };
+
+  handleUploadDirect = () => {
+    const { file: image, prefix } = this.props;
+    this.props.uploadDirectlyRequest(image, prefix);
+  };
+
+  beforeUpload = file => {
+    // console.log(file);
+    const isJPG = file.type === 'image/jpeg';
+    if (!isJPG) {
+      message.error('You can only upload JPG file!');
+    }
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+      message.error('Image must smaller than 2MB!');
+    }
+    return isJPG && isLt2M;
+  };
+
   render() {
-    const { file, step, compressStatus, scaleStatus } = this.props;
+    const { step, compressStatus, scaleStatus, error } = this.props;
     const { previewImage } = this.state;
     return (
       <div className="upload-container">
+        <QyAlert error={error} />
         {step === 0 ? (
           <Dragger
             accept=".png, .jpg, .jpeg"
             {...uploadProps}
             onChange={this.handleUpload}
+            beforeUpload={this.beforeUpload}
           >
             <p className="ant-upload-drag-icon">
               <Icon type="inbox" />
             </p>
-            <p className="ant-upload-text">
-              Click or drag file to this area to upload
-            </p>
+            <p className="ant-upload-text">单击或拖动文件到此区域进行上传</p>
           </Dragger>
         ) : (
           <div className="pic-quality-container">
             <div className="pic-switch">
               <div className="pic-switch-item">
-                <div className="pic-switch-title">压缩质量</div>
+                <div className="pic-switch-title">压缩图片</div>
                 <Switch
                   onChange={() => {
                     this.props.openCompress();
@@ -80,7 +116,7 @@ class QyUpload extends React.Component {
                 />
               </div>
               <div className="pic-switch-item">
-                <div className="pic-switch-title">调整比例</div>
+                <div className="pic-switch-title">调整图片比例</div>
                 <Switch
                   onChange={() => {
                     this.props.openScale();
@@ -95,8 +131,12 @@ class QyUpload extends React.Component {
                 <div className="pic-explain">
                   *eg. 对上传的图片进行压缩的比例（0-1）
                 </div>
-                <Slider />
-                <Button type="primary" icon="copy" onChange={() => {}}>
+                <Slider silderType="compress" />
+                <Button
+                  type="primary"
+                  icon="copy"
+                  onClick={this.handleCompress}
+                >
                   压缩图片
                 </Button>
               </div>
@@ -104,12 +144,16 @@ class QyUpload extends React.Component {
 
             {scaleStatus ? (
               <div className="pic-wrapper">
-                <div className="pic-title">调整比例</div>
+                <div className="pic-title">调整图片比例</div>
                 <div className="pic-explain">
                   *eg. 对上传的图片进行调整的比例（0-1）
                 </div>
-                <Slider />
-                <Button type="primary" icon="zoom-out">
+                <Slider silderType="scale" />
+                <Button
+                  type="primary"
+                  icon="zoom-out"
+                  onClick={this.handleScale}
+                >
                   调整比例
                 </Button>
               </div>
@@ -120,9 +164,16 @@ class QyUpload extends React.Component {
               https://static.airbob.org/under-graduate/图片名称
             </div>
             <div className="pic-path">
-              <Input placeholder="需要上传的图片的路径" />
+              <Input
+                onChange={this.handlePrefix}
+                placeholder="需要上传的图片的路径"
+              />
             </div>
-            <Button type="primary" icon="upload">
+            <Button
+              onClick={this.handleUploadDirect}
+              type="primary"
+              icon="upload"
+            >
               上传至七牛云
             </Button>
             <Modal
@@ -146,6 +197,7 @@ const mapDispatchToProps = dispatch => ({
   changeStep: (...args) => dispatch(changeStep(...args)),
   openCompress: () => dispatch(openCompress()),
   openScale: () => dispatch(openScale()),
+  prefixInput: (...args) => dispatch(prefixInput(...args)),
   compressRequest: (...args) => dispatch(compressRequest(...args)),
   scaleRequest: (...args) => dispatch(scaleRequest(...args)),
   uploadDirectlyRequest: (...args) => dispatch(uploadDirectlyRequest(...args)),

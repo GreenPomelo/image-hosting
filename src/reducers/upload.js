@@ -1,9 +1,15 @@
 import {
   UPLOAD,
-  ERROR_MESSAGE,
   CHANGE_STEP,
   COMPRESS_OPEN,
-  SCALE_OPEN
+  SCALE_OPEN,
+  SCALE_SELECT,
+  COMPRESS_SELECT,
+  UPLOAD_DIRECT_ERROR,
+  UPLOAD_INDIRECT_ERROR,
+  SCALE_IMAGE_ERROR,
+  COMPRESS_IMAGE_ERROR,
+  PREFIX_INPUT
 } from '../actions/constant';
 
 const initalState = {
@@ -11,7 +17,10 @@ const initalState = {
   error: '',
   step: 0,
   compressStatus: true,
-  scaleStatus: true
+  scaleStatus: true,
+  scaleRatio: 0,
+  imageQuality: 0,
+  prefix: ''
 };
 
 export const uploadReducer = (state = initalState, action) => {
@@ -21,7 +30,10 @@ export const uploadReducer = (state = initalState, action) => {
         ...state,
         file: action.file
       };
-    case ERROR_MESSAGE:
+    case UPLOAD_DIRECT_ERROR:
+    case UPLOAD_INDIRECT_ERROR:
+    case SCALE_IMAGE_ERROR:
+    case COMPRESS_IMAGE_ERROR:
       return {
         ...state,
         error: action.error
@@ -41,6 +53,12 @@ export const uploadReducer = (state = initalState, action) => {
         ...state,
         scaleStatus: !state.scaleStatus
       };
+    case SCALE_SELECT:
+      return { ...state, scaleRatio: action.scaleRatio };
+    case COMPRESS_SELECT:
+      return { ...state, imageQuality: action.imageQuality };
+    case PREFIX_INPUT:
+      return { ...state, prefix: action.prefix };
     default:
       return state;
   }

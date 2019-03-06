@@ -64,13 +64,14 @@ class QyUserList extends React.Component {
   };
 
   render() {
-    const { list, error } = this.props;
+    const { list, userError } = this.props;
     return (
       <div style={styleSheet.container}>
-        <QyAlert error={error} />
+        <QyAlert error={userError} />
         <List
           itemLayout="horizontal"
           dataSource={list}
+          locale={{ emptyText: '暂无数据' }}
           renderItem={item => (
             <List.Item
               actions={[

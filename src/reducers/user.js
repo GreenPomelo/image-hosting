@@ -1,27 +1,53 @@
-import { LOGIN_SUCCEED, LOG_OUT, ERROR_MESSAGE } from '../actions/constant';
+import {
+  LOGIN_SUCCEED,
+  LOG_OUT,
+  LOGIN_ERROR,
+  LOG_OUT_ERROR,
+  CHECK_LOGIN,
+  USER_NAME_INPUT,
+  PASS_WORD_INPUT
+} from '../actions/constant';
 
 export const initialUser = {
   username: '',
-  token: null,
+  password: '',
+  cookie: null,
   isLogin: false,
-  error: ''
+  loginError: ''
 };
 
 export const userReducer = (state = initialUser, action) => {
   switch (action.type) {
+    case USER_NAME_INPUT:
+      return {
+        ...state,
+        username: action.username
+      };
+    case PASS_WORD_INPUT:
+      return {
+        ...state,
+        password: action.password
+      };
     case LOGIN_SUCCEED:
       return {
         ...state,
-        token: action.token,
+        cookie: action.cookie,
         username: action.username,
         isLogin: true
       };
-    case ERROR_MESSAGE:
+    case LOGIN_ERROR:
+    case LOG_OUT_ERROR:
       return {
         ...state,
-        error: action.error
+        loginError: action.error
+      };
+    case CHECK_LOGIN:
+      return {
+        ...state,
+        isLogin: action.loginStatus
       };
     case LOG_OUT:
+      return { ...state, isLogin: false };
     default:
       return state;
   }
