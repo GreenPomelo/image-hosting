@@ -46,19 +46,21 @@ export const uploadReducer = (state = initalState, action) => {
     case COMPRESS_OPEN:
       return {
         ...state,
-        compressStatus: !state.compressStatus
+        compressStatus: !state.compressStatus,
+        error: ''
       };
     case SCALE_OPEN:
       return {
         ...state,
-        scaleStatus: !state.scaleStatus
+        scaleStatus: !state.scaleStatus,
+        error: ''
       };
     case SCALE_SELECT:
-      return { ...state, scaleRatio: action.scaleRatio };
+      return { ...state, scaleRatio: action.scaleRatio, error: '' };
     case COMPRESS_SELECT:
-      return { ...state, imageQuality: action.imageQuality };
+      return { ...state, imageQuality: action.imageQuality, error: '' };
     case PREFIX_INPUT:
-      return { ...state, prefix: action.prefix };
+      return { ...state, prefix: action.prefix, error: '' };
     default:
       return state;
   }

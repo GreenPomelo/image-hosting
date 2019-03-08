@@ -17,7 +17,8 @@
     "redux-logger": "^3.0.6",
     "redux-saga": "^1.0.1",
     "redux-thunk": "^2.3.0",
-    "styled-components": "^4.0.2"
+    "styled-components": "^4.0.2",
+    "customize-cra": "^0.2.12"
   },
   "devDependencies": {
     "eslint-config-airbnb": "^17.1.0",
@@ -30,12 +31,13 @@
     "lint-staged": "^8.1.0",
     "prettier": "^1.15.2",
     "prettier-eslint": "^8.8.2",
-    "prettier-eslint-cli": "^4.7.1"
+    "prettier-eslint-cli": "^4.7.1",
+    "react-app-rewired": "^2.1.0"
   },
   "author": "WynnXin",
   "license": "AGPL",
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-app-rewired start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -59,6 +61,5 @@
     "hooks": {
       "pre-commit": "lint-staged"
     }
-  },
-  "proxy": "https://qingyou.njupt.edu.cn/mini_program"
+  }
 }

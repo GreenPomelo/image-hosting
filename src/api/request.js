@@ -1,1 +1,3 @@
-export const REQUEST_URL = 'https://qingyou.njupt.edu.cn/mini_program';
+const REQUEST_URL = 'https://qingyou.njupt.edu.cn/mini_program';
+
+export default REQUEST_URL;

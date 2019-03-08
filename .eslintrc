@@ -37,6 +37,7 @@
     "localStorage": true,
     "window": true,
     "document": true,
-    "Event": true
+    "Event": true,
+    "FormData": true
   }
 }

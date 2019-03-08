@@ -1,5 +1,5 @@
 import React from 'react';
-import { Upload, Icon, message, Input, Switch, Modal, Button } from 'antd';
+import { Upload, Icon, message, Input, Switch, Button, Modal } from 'antd';
 import '../style/upload.sass';
 import { connect } from 'react-redux';
 import Slider from '../components/slider';
@@ -20,11 +20,6 @@ const { Dragger } = Upload;
 const uploadProps = {
   name: 'file',
   multiple: false,
-  action: '//jsonplaceholder.typicode.com/posts/',
-  headers: {
-    authorization: 'authorization-text'
-  },
-  // Requset Url
   onChange(info) {
     const {
       file: { status }
@@ -42,8 +37,16 @@ const uploadProps = {
 
 class QyUpload extends React.Component {
   state = {
-    previewImage: ''
+    previewVisible: false
   };
+
+  handlePreview = () => {
+    this.setState({
+      previewVisible: true
+    });
+  };
+
+  handleCancel = () => this.setState({ previewVisible: false });
 
   handleUpload = ev => {
     this.props.upload(ev.file);
@@ -73,7 +76,6 @@ class QyUpload extends React.Component {
   };
 
   beforeUpload = file => {
-    // console.log(file);
     const isJPG = file.type === 'image/jpeg';
     if (!isJPG) {
       message.error('You can only upload JPG file!');
@@ -85,9 +87,24 @@ class QyUpload extends React.Component {
     return isJPG && isLt2M;
   };
 
+  getObjectURL = file => {
+    let url = null;
+    if (window.createObjectURL !== undefined) {
+      // basic
+      url = window.createObjectURL(file);
+    } else if (window.URL !== undefined) {
+      // mozilla(firefox)
+      url = window.URL.createObjectURL(file);
+    } else if (window.webkitURL !== undefined) {
+      // webkit or chrome
+      url = window.webkitURL.createObjectURL(file);
+    }
+    return url;
+  };
+
   render() {
-    const { step, compressStatus, scaleStatus, error } = this.props;
-    const { previewImage } = this.state;
+    const { previewVisible } = this.state;
+    const { step, compressStatus, scaleStatus, error, file } = this.props;
     return (
       <div className="upload-container">
         <QyAlert error={error} />
@@ -95,7 +112,7 @@ class QyUpload extends React.Component {
           <Dragger
             accept=".png, .jpg, .jpeg"
             {...uploadProps}
-            onChange={this.handleUpload}
+            customRequest={this.handleUpload}
             beforeUpload={this.beforeUpload}
           >
             <p className="ant-upload-drag-icon">
@@ -105,84 +122,95 @@ class QyUpload extends React.Component {
           </Dragger>
         ) : (
           <div className="pic-quality-container">
-            <div className="pic-switch">
-              <div className="pic-switch-item">
-                <div className="pic-switch-title">压缩图片</div>
-                <Switch
-                  onChange={() => {
-                    this.props.openCompress();
-                  }}
-                  defaultChecked
-                />
-              </div>
-              <div className="pic-switch-item">
-                <div className="pic-switch-title">调整图片比例</div>
-                <Switch
-                  onChange={() => {
-                    this.props.openScale();
-                  }}
-                  defaultChecked
-                />
-              </div>
-            </div>
-            {compressStatus ? (
-              <div className="pic-wrapper">
-                <div className="pic-title">压缩图片</div>
-                <div className="pic-explain">
-                  *eg. 对上传的图片进行压缩的比例（0-1）
+            <div className="pic-function-container">
+              <div className="pic-switch">
+                <div className="pic-switch-item">
+                  <div className="pic-switch-title">压缩图片</div>
+                  <Switch
+                    onChange={() => {
+                      this.props.openCompress();
+                    }}
+                    defaultChecked
+                  />
                 </div>
-                <Slider silderType="compress" />
-                <Button
-                  type="primary"
-                  icon="copy"
-                  onClick={this.handleCompress}
-                >
-                  压缩图片
-                </Button>
+                <div className="pic-switch-item">
+                  <div className="pic-switch-title">调整图片比例</div>
+                  <Switch
+                    onChange={() => {
+                      this.props.openScale();
+                    }}
+                    defaultChecked
+                  />
+                </div>
               </div>
-            ) : null}
+              <div className="pic-container">
+                <div className="pic-instance" onClick={this.handlePreview}>
+                  <img alt="example" src={this.getObjectURL(file)} />
+                </div>
+                <Modal
+                  visible={previewVisible}
+                  footer={null}
+                  onCancel={this.handleCancel}
+                >
+                  <img
+                    alt="example"
+                    style={{ width: '100%' }}
+                    src={this.getObjectURL(file)}
+                  />
+                </Modal>
+              </div>
+              {compressStatus ? (
+                <div className="pic-wrapper">
+                  <div className="pic-title">压缩图片</div>
+                  <div className="pic-explain">
+                    *eg. 对上传的图片进行压缩的比例（0-1）
+                  </div>
+                  <Slider silderType="compress" />
+                  <Button
+                    type="primary"
+                    icon="copy"
+                    onClick={this.handleCompress}
+                  >
+                    压缩图片
+                  </Button>
+                </div>
+              ) : null}
 
-            {scaleStatus ? (
-              <div className="pic-wrapper">
-                <div className="pic-title">调整图片比例</div>
-                <div className="pic-explain">
-                  *eg. 对上传的图片进行调整的比例（0-1）
+              {scaleStatus ? (
+                <div className="pic-wrapper">
+                  <div className="pic-title">调整图片比例</div>
+                  <div className="pic-explain">
+                    *eg. 对上传的图片进行调整的比例（0-1）
+                  </div>
+                  <Slider silderType="scale" />
+                  <Button
+                    type="primary"
+                    icon="zoom-out"
+                    onClick={this.handleScale}
+                  >
+                    调整比例
+                  </Button>
                 </div>
-                <Slider silderType="scale" />
-                <Button
-                  type="primary"
-                  icon="zoom-out"
-                  onClick={this.handleScale}
-                >
-                  调整比例
-                </Button>
+              ) : null}
+              <div className="pic-title">图片前缀</div>
+              <div className="pic-explain">
+                *eg. 前缀为 under-graduate/ 图片链接就是
+                https://static.airbob.org/under-graduate/图片名称
               </div>
-            ) : null}
-            <div className="pic-title">图片前缀</div>
-            <div className="pic-explain">
-              *eg. 前缀为 under-graduate/ 图片链接就是
-              https://static.airbob.org/under-graduate/图片名称
+              <div className="pic-path">
+                <Input
+                  onChange={this.handlePrefix}
+                  placeholder="需要上传的图片的路径"
+                />
+              </div>
+              <Button
+                onClick={this.handleUploadDirect}
+                type="primary"
+                icon="upload"
+              >
+                上传至七牛云
+              </Button>
             </div>
-            <div className="pic-path">
-              <Input
-                onChange={this.handlePrefix}
-                placeholder="需要上传的图片的路径"
-              />
-            </div>
-            <Button
-              onClick={this.handleUploadDirect}
-              type="primary"
-              icon="upload"
-            >
-              上传至七牛云
-            </Button>
-            <Modal
-              // visible={previewVisible}
-              footer={null}
-              // onCancel={this.handleCancel}
-            >
-              <img alt="example" style={{ width: '100%' }} src={previewImage} />
-            </Modal>
           </div>
         )}
       </div>
