@@ -1,13 +1,7 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { notification, Icon } from 'antd';
 
-export default class QyAlert extends Component {
-  componentDidUpdate(prevProps) {
-    if (prevProps.error !== this.props.error) {
-      this.notification(this.props.error);
-    }
-  }
-
+export default class QyAlert extends PureComponent {
   notification = error => {
     notification.open({
       message: '通知消息🍋',

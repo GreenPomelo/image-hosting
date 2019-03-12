@@ -1,5 +1,14 @@
 import React from 'react';
-import { Upload, Icon, message, Input, Switch, Button, Modal } from 'antd';
+import {
+  Upload,
+  Icon,
+  message,
+  Input,
+  Switch,
+  Button,
+  Modal,
+  notification
+} from 'antd';
 import '../style/upload.sass';
 import { connect } from 'react-redux';
 import Slider from '../components/slider';
@@ -48,14 +57,6 @@ class QyUpload extends React.Component {
 
   handleCancel = () => this.setState({ previewVisible: false });
 
-  handleUpload = ev => {
-    this.props.upload(ev.file);
-    const { file } = this.props;
-    if (file) {
-      this.props.changeStep(1);
-    }
-  };
-
   handleCompress = () => {
     const { file, imageQuality } = this.props;
     this.props.compressRequest(file, imageQuality);
@@ -71,20 +72,25 @@ class QyUpload extends React.Component {
   };
 
   handleUploadDirect = () => {
-    const { file: image, prefix } = this.props;
-    this.props.uploadDirectlyRequest(image, prefix);
+    const { file: image, prefix, compressSuccessStatus, fileName } = this.props;
+    if (compressSuccessStatus) {
+      this.props.uploadIndirectRequest(fileName, prefix);
+    } else {
+      this.props.uploadDirectlyRequest(image, prefix);
+    }
   };
 
-  beforeUpload = file => {
-    const isJPG = file.type === 'image/jpeg';
-    if (!isJPG) {
-      message.error('You can only upload JPG file!');
-    }
-    const isLt2M = file.size / 1024 / 1024 < 2;
+  beforeUpload = fileBefore => {
+    const isLt2M = fileBefore.size / 1024 / 1024 < 2;
     if (!isLt2M) {
-      message.error('Image must smaller than 2MB!');
+      message.error('图片大小必须小于 2MB!');
     }
-    return isJPG && isLt2M;
+    this.props.upload(fileBefore);
+    const { file } = this.props;
+    if (file && isLt2M) {
+      this.props.changeStep(1);
+    }
+    return isLt2M;
   };
 
   getObjectURL = file => {
@@ -102,18 +108,45 @@ class QyUpload extends React.Component {
     return url;
   };
 
+  backToUpload = () => {
+    this.props.changeStep(0);
+  };
+
+  copyBoard = () => {
+    const { imageLink } = this.props;
+    navigator.clipboard.writeText(imageLink).then(() => {
+      notification.open({
+        message: '通知消息🍋',
+        description: `粘贴成功`,
+        duration: 6,
+        icon: <Icon type="bulb" style={{ color: '#108ee9' }} />
+      });
+    });
+  };
+
   render() {
     const { previewVisible } = this.state;
-    const { step, compressStatus, scaleStatus, error, file } = this.props;
+    const {
+      step,
+      compressStatus,
+      scaleStatus,
+      error,
+      file,
+      imageLink,
+      compressionRatio
+    } = this.props;
     return (
-      <div className="upload-container">
+      <div
+        className="upload-container"
+        style={{ height: step === 0 ? `calc(100vh - 133px)` : `` }}
+      >
         <QyAlert error={error} />
         {step === 0 ? (
           <Dragger
             accept=".png, .jpg, .jpeg"
             {...uploadProps}
-            customRequest={this.handleUpload}
             beforeUpload={this.beforeUpload}
+            withCredentials
           >
             <p className="ant-upload-drag-icon">
               <Icon type="inbox" />
@@ -130,7 +163,7 @@ class QyUpload extends React.Component {
                     onChange={() => {
                       this.props.openCompress();
                     }}
-                    defaultChecked
+                    defaultChecked={false}
                   />
                 </div>
                 <div className="pic-switch-item">
@@ -139,13 +172,19 @@ class QyUpload extends React.Component {
                     onChange={() => {
                       this.props.openScale();
                     }}
-                    defaultChecked
+                    defaultChecked={false}
                   />
                 </div>
               </div>
               <div className="pic-container">
-                <div className="pic-instance" onClick={this.handlePreview}>
-                  <img alt="example" src={this.getObjectURL(file)} />
+                <div className="pic-title">图片信息</div>
+                <div>
+                  <div style={{ marginBottom: `5px` }}>
+                    图片名称：{file.name}
+                  </div>
+                  <div className="pic-instance" onClick={this.handlePreview}>
+                    <img alt="example" src={this.getObjectURL(file)} />
+                  </div>
                 </div>
                 <Modal
                   visible={previewVisible}
@@ -166,6 +205,11 @@ class QyUpload extends React.Component {
                     *eg. 对上传的图片进行压缩的比例（0-1）
                   </div>
                   <Slider silderType="compress" />
+                  {compressionRatio ? (
+                    <div style={{ marginBottom: `5px` }}>
+                      真实压缩比：{compressionRatio}
+                    </div>
+                  ) : null}
                   <Button
                     type="primary"
                     icon="copy"
@@ -194,15 +238,26 @@ class QyUpload extends React.Component {
               ) : null}
               <div className="pic-title">图片前缀</div>
               <div className="pic-explain">
-                *eg. 前缀为 under-graduate/ 图片链接就是
+                *eg. 前缀为 under-graduate 图片链接就是
                 https://static.airbob.org/under-graduate/图片名称
               </div>
               <div className="pic-path">
                 <Input
+                  style={{ width: `200px`, marginRight: `10px` }}
                   onChange={this.handlePrefix}
                   placeholder="需要上传的图片的路径"
                 />
+                {imageLink ? (
+                  <Button onClick={this.copyBoard}>复制链接</Button>
+                ) : null}
               </div>
+              <Button
+                onClick={this.backToUpload}
+                style={{ marginRight: `20px` }}
+                icon="arrow-left"
+              >
+                返回继续上传
+              </Button>
               <Button
                 onClick={this.handleUploadDirect}
                 type="primary"

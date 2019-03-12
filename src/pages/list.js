@@ -1,5 +1,5 @@
 import React from 'react';
-import { List, Avatar } from 'antd';
+import { List, notification, Icon } from 'antd';
 import '../style/list.sass';
 import { connect } from 'react-redux';
 import QyAlert from '../components/alert';
@@ -11,9 +11,21 @@ class QyList extends React.Component {
   }
 
   getHistoryList = () => {
-    const ONE = 1;
+    const ZERO = 0;
     const TWENTY = 20;
-    this.props.listRequest(ONE, TWENTY);
+    this.props.listRequest(ZERO, TWENTY);
+  };
+
+  copyPic = (item, e) => {
+    e.preventDefault();
+    navigator.clipboard.writeText(item.picUrl).then(() => {
+      notification.open({
+        message: '通知消息🍋',
+        description: `粘贴成功`,
+        duration: 6,
+        icon: <Icon type="bulb" style={{ color: '#108ee9' }} />
+      });
+    });
   };
 
   render() {
@@ -30,22 +42,23 @@ class QyList extends React.Component {
             },
             pageSize: 3
           }}
-          dataSource={historyList.content}
+          dataSource={historyList}
           renderItem={item => (
             <List.Item
               key={item.title}
-              extra={
-                <img
-                  width={272}
-                  alt="logo"
-                  src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
-                />
-              }
+              extra={<img width={272} alt="logo" src={item.picUrl} />}
             >
               <List.Item.Meta
-                avatar={<Avatar src={item.avatar} />}
-                title={<a href={item.href}>{item.title}</a>}
-                description={item.description}
+                title={
+                  <a
+                    onClick={e => {
+                      this.copyPic(item, e);
+                    }}
+                  >
+                    复制链接
+                  </a>
+                }
+                description="七牛云"
               />
               {item.content}
             </List.Item>

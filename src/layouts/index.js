@@ -5,7 +5,7 @@ import routerData from '../router-config';
 import '../style/navigate.sass';
 import 'antd/dist/antd.css';
 
-const { Header, Content, Footer } = Layout;
+const { Header, Footer } = Layout;
 
 const UserComponent = withRouter(props => {
   const { location } = props;
@@ -43,7 +43,6 @@ const UserComponent = withRouter(props => {
           )}
           <Redirect exact to="/login" />
         </Switch>
-        <Content />
         <Footer style={{ textAlign: 'center' }}>
           CopyRight @2017-2019 青柚工作室 qingyou.njupt.edu.cn
         </Footer>

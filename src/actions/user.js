@@ -31,6 +31,7 @@ export const loginRequest = (username, password) => dispatch => {
   userLogin(username, password).then(({ data: { success, data, errMsg } }) => {
     if (success) {
       localStorage.setItem('cookie', data);
+      // document.cookie = `auth=${data}`;
       dispatch(loginSuccess({ username, cookie: data }));
     } else {
       dispatch(loginError(errMsg));

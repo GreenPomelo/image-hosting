@@ -32,7 +32,11 @@ export const compressSlider = imageQuality => ({
   imageQuality
 });
 export const scaleFunc = imageFile => ({ type: SCALE_IMAGE, imageFile });
-export const compressFunc = imageFile => ({ type: COMPRESS_IMAGE, imageFile });
+export const compressFunc = (fileName, compressionRatio) => ({
+  type: COMPRESS_IMAGE,
+  fileName,
+  compressionRatio
+});
 export const uploadDirectlyFunc = imageLink => ({
   type: UPLOAD_DIRECT,
   imageLink
@@ -54,25 +58,26 @@ const uploadIndirectError = error => ({
 });
 
 export const scaleRequest = (image, scaleRatio) => dispatch => {
-  scaleImage(image, scaleRatio).then(({ data: { success, data, errMsg } }) => {
-    if (success) {
-      dispatch(scaleFunc(data));
+  scaleImage(image, scaleRatio).then(({ headers }) => {
+    if (headers['file-name']) {
+      dispatch(scaleFunc(headers['file-name']));
     } else {
-      dispatch(scaleError(errMsg));
+      dispatch(scaleError(`调整比例失败`));
     }
   });
 };
 
 export const compressRequest = (image, imageQuality) => dispatch => {
-  compressImage(image, imageQuality).then(
-    ({ data: { success, data, errMsg } }) => {
-      if (success) {
-        dispatch(compressFunc(data));
-      } else {
-        dispatch(compressError(errMsg));
-      }
+  compressImage(image, imageQuality).then(({ headers }) => {
+    console.log(headers);
+    if (headers['file-name']) {
+      dispatch(
+        compressFunc(headers['file-name'], headers['compression-ratio'])
+      );
+    } else {
+      dispatch(compressError(`压缩图片失败`));
     }
-  );
+  });
 };
 
 export const uploadDirectlyRequest = (image, prefix) => dispatch => {

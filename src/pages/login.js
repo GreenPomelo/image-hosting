@@ -17,7 +17,7 @@ const styleComponent = {
   LoginContainer: {
     display: 'flex',
     width: '100vw',
-    height: '100%',
+    height: 'calc(100vh - 133px)',
     flexDirection: 'column',
     alignItems: 'center'
   },

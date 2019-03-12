@@ -11,7 +11,7 @@ export const historyReducer = (state = initialState, action) => {
     case HISTORY_LIST:
       return {
         ...state,
-        historyList: action.historyList,
+        historyList: action.historyList.content.filter(item => !!item.picUrl),
         progressStatus: false,
         historyError: ''
       };

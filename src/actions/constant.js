@@ -53,3 +53,8 @@ export const PREFIX_INPUT = `PREFIX_INPUT`;
  * 错误处理
  */
 export const ERROR_MESSAGE = `ERROR_MESSAGE`;
+
+/**
+ * Auth
+ */
+export const NEED_LOGIN = `NEED_LOGIN`;

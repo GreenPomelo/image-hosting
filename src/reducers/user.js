@@ -5,7 +5,8 @@ import {
   LOG_OUT_ERROR,
   CHECK_LOGIN,
   USER_NAME_INPUT,
-  PASS_WORD_INPUT
+  PASS_WORD_INPUT,
+  NEED_LOGIN
 } from '../actions/constant';
 
 export const initialUser = {
@@ -47,6 +48,8 @@ export const userReducer = (state = initialUser, action) => {
         isLogin: action.loginStatus
       };
     case LOG_OUT:
+      return { ...state, isLogin: false };
+    case NEED_LOGIN:
       return { ...state, isLogin: false };
     default:
       return state;

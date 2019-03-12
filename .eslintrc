@@ -38,6 +38,7 @@
     "window": true,
     "document": true,
     "Event": true,
-    "FormData": true
+    "FormData": true,
+    "navigator": true
   }
 }

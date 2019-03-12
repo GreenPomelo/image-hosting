@@ -3,19 +3,19 @@ import axios from '.';
 
 export const userLogin = (username, password) =>
   axios.post(
-    `/picbed/user/login?${qs.stringify({
+    `/user/login?${qs.stringify({
       username,
       password
     })}`
   );
 
-export const userLogout = () => axios.post(`/picbed/user/logout`);
+export const userLogout = () => axios.post(`/user/logout`);
 
-export const AllUsers = () => axios.post(`/picbed/user/allUsers`);
+export const AllUsers = () => axios.post(`/user/allUsers`);
 
 export const AddUser = (studentId, password) =>
   axios.post(
-    `/picbed/user/addUser?${qs.stringify({
+    `/user/addUser?${qs.stringify({
       studentId,
       password
     })}`
@@ -23,7 +23,7 @@ export const AddUser = (studentId, password) =>
 
 export const DeleteUser = studentId =>
   axios.delete(
-    `/picbed/user/deleteUser?${qs.stringify({
+    `/user/deleteUser?${qs.stringify({
       studentId
     })}`
   );

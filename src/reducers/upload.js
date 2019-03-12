@@ -5,22 +5,30 @@ import {
   SCALE_OPEN,
   SCALE_SELECT,
   COMPRESS_SELECT,
+  UPLOAD_DIRECT,
   UPLOAD_DIRECT_ERROR,
+  UPLOAD_INDIRECT,
   UPLOAD_INDIRECT_ERROR,
   SCALE_IMAGE_ERROR,
   COMPRESS_IMAGE_ERROR,
-  PREFIX_INPUT
+  PREFIX_INPUT,
+  SCALE_IMAGE,
+  COMPRESS_IMAGE
 } from '../actions/constant';
 
 const initalState = {
   file: {},
   error: '',
   step: 0,
-  compressStatus: true,
-  scaleStatus: true,
+  compressStatus: false,
+  scaleStatus: false,
   scaleRatio: 0,
   imageQuality: 0,
-  prefix: ''
+  prefix: '',
+  imageLink: '',
+  fileName: '',
+  compressionRatio: 0,
+  compressSuccessStatus: false
 };
 
 export const uploadReducer = (state = initalState, action) => {
@@ -29,6 +37,26 @@ export const uploadReducer = (state = initalState, action) => {
       return {
         ...state,
         file: action.file
+      };
+    case UPLOAD_DIRECT:
+    case UPLOAD_INDIRECT:
+      return {
+        ...state,
+        error: `上传成功`,
+        imageLink: action.imageLink
+      };
+    case SCALE_IMAGE:
+      return {
+        ...state,
+        error: `调整比例成功`
+      };
+    case COMPRESS_IMAGE:
+      return {
+        ...state,
+        error: `压缩成功`,
+        fileName: action.fileName,
+        compressionRatio: action.compressionRatio,
+        compressSuccessStatus: true
       };
     case UPLOAD_DIRECT_ERROR:
     case UPLOAD_INDIRECT_ERROR:
