@@ -34,7 +34,8 @@ export const userReducer = (state = initialUser, action) => {
         ...state,
         cookie: action.cookie,
         username: action.username,
-        isLogin: true
+        isLogin: true,
+        loginError: ``
       };
     case LOGIN_ERROR:
     case LOG_OUT_ERROR:
