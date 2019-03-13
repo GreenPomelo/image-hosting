@@ -19,19 +19,19 @@ export const userListReducer = (state = initialState, action) => {
       return {
         ...state,
         list: action.list,
-        progress: false,
-        userError: ''
+        userError: '',
+        progress: false
       };
     case USER_ADD:
       return {
         ...state,
-        userError: '',
+        userError: '添加成功',
         list: [...state.list, { studentId: action.studentId }]
       };
     case USER_DELETE:
       return {
         ...state,
-        userError: '',
+        userError: '删除成功',
         list: [
           ...state.list.filter(item => item.studentId !== action.studentId)
         ]

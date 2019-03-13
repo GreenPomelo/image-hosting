@@ -48,6 +48,7 @@ export const userReducer = (state = initialUser, action) => {
         isLogin: action.loginStatus
       };
     case LOG_OUT:
+      state = undefined;
       return { ...state, isLogin: false };
     case NEED_LOGIN:
       return { ...state, isLogin: false };
