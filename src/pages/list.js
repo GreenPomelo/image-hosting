@@ -7,13 +7,13 @@ import { listRequest } from '../actions/list';
 
 class QyList extends React.Component {
   componentDidMount() {
-    this.getHistoryList();
+    const ZERO = 0;
+    this.getHistoryList(ZERO);
   }
 
-  getHistoryList = () => {
-    const ZERO = 0;
+  getHistoryList = page => {
     const TWENTY = 20;
-    this.props.listRequest(ZERO, TWENTY);
+    this.props.listRequest(page, TWENTY);
   };
 
   copyPic = (item, e) => {
@@ -28,8 +28,13 @@ class QyList extends React.Component {
     });
   };
 
+  formatTime = timeStamp => {
+    const date = new Date(timeStamp);
+    return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
+  };
+
   render() {
-    const { historyError, historyList } = this.props;
+    const { historyError, historyList, totalList } = this.props;
     return (
       <div className="list-container">
         <QyAlert error={historyError} />
@@ -38,9 +43,10 @@ class QyList extends React.Component {
           size="large"
           pagination={{
             onChange: page => {
-              console.log(page);
+              this.getHistoryList(page - 1);
             },
-            pageSize: 3
+            defaultCurrent: 1,
+            total: totalList
           }}
           dataSource={historyList}
           renderItem={item => (
@@ -58,7 +64,7 @@ class QyList extends React.Component {
                     复制链接
                   </a>
                 }
-                description="七牛云"
+                description={`上传时间：${this.formatTime(item.createTime)}`}
               />
               {item.content}
             </List.Item>
