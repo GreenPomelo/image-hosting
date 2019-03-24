@@ -5,7 +5,7 @@ import App from './App';
 import configStore from './store/configStore';
 // import * as serviceWorker from './serviceWorker';
 
-const store = configStore();
+export const store = configStore();
 
 ReactDOM.render(
   <Provider store={store}>
