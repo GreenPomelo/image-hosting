@@ -69,7 +69,6 @@ export const scaleRequest = (image, scaleRatio) => dispatch => {
 
 export const compressRequest = (image, imageQuality) => dispatch => {
   compressImage(image, imageQuality).then(({ headers }) => {
-    console.log(headers);
     if (headers['file-name']) {
       dispatch(
         compressFunc(headers['file-name'], headers['compression-ratio'])

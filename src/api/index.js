@@ -10,6 +10,9 @@ axios.interceptors.response.use(response => {
   ) {
     localStorage.clear();
   }
+  if (response.data.errMsg === `AuthId Out of Date`) {
+    localStorage.clear();
+  }
   return response;
 });
 export default axios;
