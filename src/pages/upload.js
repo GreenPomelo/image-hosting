@@ -164,6 +164,7 @@ class QyUpload extends React.Component {
                       this.props.openCompress();
                     }}
                     defaultChecked={false}
+                    checked={compressStatus}
                   />
                 </div>
                 <div className="pic-switch-item">
@@ -173,6 +174,7 @@ class QyUpload extends React.Component {
                       this.props.openScale();
                     }}
                     defaultChecked={false}
+                    checked={scaleStatus}
                   />
                 </div>
               </div>
