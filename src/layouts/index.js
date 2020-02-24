@@ -56,7 +56,7 @@ class Navigator extends React.Component {
             <Redirect exact to="/login" />
           </Switch>
           <Footer style={{ textAlign: 'center' }}>
-            CopyRight @2017-2019 青柚工作室 qingyou.njupt.edu.cn
+            CopyRight @2017-{new Date().getFullYear()} 青柚工作室 qingyou.njupt.edu.cn
           </Footer>
         </Layout>
       </div>
